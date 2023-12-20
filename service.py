@@ -30,7 +30,7 @@ def usage():
     )
 
 # define the route which will be used to predict
-@app.route("/predict", methods=["GET"])
+@app.route("/predict", methods=["POST"])
 def predict():
     
     #going to use try catch. Frontend should never break
@@ -57,10 +57,9 @@ def predict():
         # returns the result
         return jsonify(
             {
-                "prediction": returnText,
-                "code": 200  # para ajudar na verificação de um "200 - OK"
+                "prediction": returnText
             }
-        ), 200
+        ), 201 # created
     except Exception as e:
         return jsonify({'result': 'error', 'message': str(e)}),400
     
