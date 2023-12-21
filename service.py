@@ -6,14 +6,16 @@ from flask import Flask, jsonify, request
 import logging
 from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
+import functions as func
 
 # define logging level
 logging.basicConfig(level=logging.INFO)
 
 # load model created with scilearn
-model = pickle.load(open("./models/tree_model.sav", "rb"))
+model = pickle.load(open("./models/ensembleFinal.sav", "rb"))
 # load the count vectorizer
-cv = pickle.load(open("./vectorizers/count_vectorizer.sav","rb"))
+print("Loading Count Vectorizer...")
+cv = pickle.load(open("./vectorizers/count_vectorizerNew.sav","rb"))
 # ------------------------------------
 # API: we will use Flask to create a simple API
 app = Flask(__name__)
@@ -39,8 +41,8 @@ def predict():
         data = request.json
         text = data.get('text', '')
         print (text)
-        #cv = CountVectorizer(lowercase=True, stop_words='english',ngram_range = (1, 1))        
-        
+        text= func.preprocess_text(text)
+        print (text)
         # load the prediction with the text. no validation is done. 
         logging.info("Starting text processing. Please wait...")
         cvText = cv.transform([text])
@@ -61,6 +63,7 @@ def predict():
             }
         ), 201 # created
     except Exception as e:
+        print (e)
         return jsonify({'result': 'error', 'message': str(e)}),400
     
 
